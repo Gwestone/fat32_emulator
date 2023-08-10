@@ -102,8 +102,10 @@ class Directory:
                 result.add_subdirectory(temp_dir)
 
             elif unpacked_data.attributes == FAT_IS_FILE_ATTRIBUTE:
-                result.add_file(
-                    File(unpacked_data.filename, unpacked_data.extension, unpacked_data.cluster, "".encode('UTF-8')))
+
+                data = _file_system.read_by_addr(unpacked_data.cluster)
+
+                result.add_file(File(unpacked_data.filename, unpacked_data.extension, unpacked_data.cluster, data))
 
             count += 1
 
