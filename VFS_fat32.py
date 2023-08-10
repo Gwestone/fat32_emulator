@@ -56,6 +56,6 @@ class Virtual_FS:
 
     def get_dir_by_addr(self, _addr: int) -> Directory:
         data = self.read_by_addr(_addr)
-        result = Directory.deserialize(data)
+        result = Directory.deserialize(data, self)
         result.cluster = _addr
         return result

@@ -82,7 +82,7 @@ class Directory:
         return self.name + '/'
 
     @classmethod
-    def deserialize(cls, data: bytes) -> 'Directory':
+    def deserialize(cls, data: bytes, _file_system) -> 'Directory':
         count = 0
 
         result = Directory("", -1)
@@ -92,7 +92,15 @@ class Directory:
             unpacked_data.deserialize(data[i:i+32])
 
             if unpacked_data.attributes == FAT_IS_DIRECTORY_ATTRIBUTE:
-                result.add_subdirectory(Directory(unpacked_data.filename, unpacked_data.cluster))
+
+                data = _file_system.read_by_addr(unpacked_data.cluster)
+
+                temp_dir = Directory.deserialize(data, _file_system)
+                temp_dir.name = unpacked_data.filename
+                temp_dir.cluster = unpacked_data.cluster
+
+                result.add_subdirectory(temp_dir)
+
             elif unpacked_data.attributes == FAT_IS_FILE_ATTRIBUTE:
                 result.add_file(
                     File(unpacked_data.filename, unpacked_data.extension, unpacked_data.cluster, "".encode('UTF-8')))
