@@ -81,35 +81,37 @@ class Directory:
     def get_path_append(self) -> str:
         return self.name + '/'
 
-    @classmethod
-    def deserialize(cls, data: bytes, _file_system) -> 'Directory':
-        count = 0
-
-        result = Directory("", -1)
-
-        for i in range(0, len(data), 32):
-            unpacked_data = DE_Table_Entry("", "", -1, 1)
-            unpacked_data.deserialize(data[i:i+32])
-
-            if unpacked_data.attributes == FAT_IS_DIRECTORY_ATTRIBUTE:
-
-                data = _file_system.read_by_addr(unpacked_data.cluster)
-
-                temp_dir = Directory.deserialize(data, _file_system)
-                temp_dir.name = unpacked_data.filename
-                temp_dir.cluster = unpacked_data.cluster
-
-                result.add_subdirectory(temp_dir)
-
-            elif unpacked_data.attributes == FAT_IS_FILE_ATTRIBUTE:
-
-                data = _file_system.read_by_addr(unpacked_data.cluster)
-
-                result.add_file(File(unpacked_data.filename, unpacked_data.extension, unpacked_data.cluster, data))
-
-            count += 1
-
-        return result
+    # @classmethod
+    # def deserialize(cls, data: bytes, _file_system, _name: str) -> 'Directory':
+    #     count = 0
+    #
+    #     result = Directory(_name, -1)
+    #
+    #     for i in range(0, len(data), 32):
+    #         unpacked_data = DE_Table_Entry("", "", -1, 1)
+    #         unpacked_data.deserialize(data[i:i+32])
+    #
+    #         if unpacked_data.attributes == FAT_IS_DIRECTORY_ATTRIBUTE:
+    #
+    #             data = _file_system.read_by_addr(unpacked_data.cluster)
+    #
+    #             temp_dir = Directory.deserialize(data, _file_system, unpacked_data.filename)
+    #             temp_dir.name = unpacked_data.filename
+    #             temp_dir.cluster = unpacked_data.cluster
+    #
+    #             result.add_subdirectory(temp_dir)
+    #
+    #         elif unpacked_data.attributes == FAT_IS_FILE_ATTRIBUTE:
+    #
+    #             data = _file_system.read_by_addr(unpacked_data.cluster)
+    #
+    #             result.add_file(File(unpacked_data.filename, unpacked_data.extension, unpacked_data.cluster, data))
+    #
+    #         count += 1
+    #
+    #     return result
+    def clear_subentries(self):
+        self.entries = []
 
 
 class File:

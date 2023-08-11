@@ -80,8 +80,7 @@ file_system.deserialize(file_host.read(20 * 1024), file_host.read(20 * 1024 * 10
 # file_system.write_by_addr(10, script.serialize())
 # file_system.write_by_addr(11, app.serialize())
 
-root = file_system.get_dir_by_addr(0)
-root.name = "root"
+root = file_system.get_dir_by_addr(0, "root")
 
 current_directories = [root]
 current_path = get_absolute_path(current_directories)
@@ -175,6 +174,16 @@ while True:
 
         else:
             print(f"file: {dirname} already exists")
+        continue
+
+    if command == "format":
+        file_system.format()
+        print("System formatted")
+
+        current_directories = [root]
+        root.clear_subentries()
+        current_path = get_absolute_path(current_directories)
+
         continue
 
     print(f"Unrecognized command: {command}")
