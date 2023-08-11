@@ -7,6 +7,10 @@ def open_fat32_file(filename: str) -> IO:
     current_path = os.getcwd()
     full_file_path = os.path.join(current_path, file_path)
     try:
+
+        tmp = open(full_file_path, 'a+')
+        tmp.close()
+
         file = open(full_file_path, 'r+b')
         print(f"File '{full_file_path}' opened successfully.")
         return file
